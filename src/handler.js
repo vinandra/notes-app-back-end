@@ -2,28 +2,29 @@ const { nanoid } = require('nanoid');
 const notes = require('./notes');
 
 const addNoteHandler = (request, h) => {
-  const { title, tag, body } = request.payload;
+  const { title, tags, body } = request.payload;
+
   const id = nanoid(16);
-  const createAt = new Date().toISOString();
-  const updateAt = createAt;
+  const createdAt = new Date().toISOString();
+  const updatedAt = createdAt;
 
   const newNote = {
     title,
-    tag,
+    tags,
     body,
     id,
-    createAt,
-    updateAt,
+    createdAt,
+    updatedAt,
   };
 
   notes.push(newNote);
 
-  const isSuceess = notes.filter((note) => note.id === id).length > 0;
+  const isSuccess = notes.filter((note) => note.id === id).length > 0;
 
-  if (isSuceess) {
+  if (isSuccess) {
     const response = h.response({
       status: 'success',
-      massage: 'catatan berhasil ditambahkan ',
+      message: 'Catatan berhasil ditambahkan',
       data: {
         noteId: id,
       },
@@ -34,10 +35,17 @@ const addNoteHandler = (request, h) => {
 
   const response = h.response({
     status: 'fail',
-    massage: 'catatan gagal ditambahkan ',
+    message: 'Catatan gagal ditambahkan',
   });
   response.code(500);
   return response;
 };
 
-module.exports = addNoteHandler;
+const getAllNotesHandler = () => ({
+  status: 'success',
+  data: {
+    notes,
+  },
+});
+
+module.exports = { addNoteHandler, getAllNotesHandler };
